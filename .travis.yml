@@ -1,0 +1,12 @@
+language: ruby
+script: bundle exec rake test
+rvm:
+  - 2.2
+  - 2.1
+  - 2.0.0
+  - ruby-head
+  - jruby-head
+  - rbx-2
+addons:
+  code_climate:
+    repo_token: 240d93328887c5936b3af5aadca1900358cb12bdc227831b0577be2e9a89d817
