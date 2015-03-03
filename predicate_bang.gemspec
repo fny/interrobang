@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 abusing `method_missing`}
   spec.description   = %q{Convert your `predicate_methods?` into `bangified_predicate_methods!` without
 abusing `method_missing`.}
-  spec.homepage      = "https://github.com/fny/predicate_bang"
+  spec.homepage      = 'https://github.com/fny/predicate_bang'
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
