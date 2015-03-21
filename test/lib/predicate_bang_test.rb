@@ -24,6 +24,11 @@ describe PredicateBang do
         PredicateBang.bangify_method(klass, :true?)
         assert klass.new.true!
       end
+      it "has no method missing shenanigans" do
+        klass = test_class
+        PredicateBang.bangify_method(klass, :true?)
+        assert klass.new.respond_to?(:true!)
+      end
     end
 
     describe "with a method that does not end in a ?" do
