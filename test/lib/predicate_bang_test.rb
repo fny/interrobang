@@ -38,6 +38,11 @@ describe PredicateBang do
       end
     end
 
+    it "returns the symbol of the bangified method" do
+      klass = test_class
+      assert_equal PredicateBang.bangify_method(klass, :true?), :true!
+    end
+
     it "works on methods with arguments" do
       klass = test_class
       PredicateBang.bangify_method(klass, :with_argument?)
@@ -102,6 +107,11 @@ describe PredicateBang do
       PredicateBang.bangify klass
       assert klass.new.true!
       assert klass.new.veritable!
+    end
+
+    it "returns an array of symbols of the bangified methods" do
+      klass = test_class
+      assert_equal PredicateBang.bangify(klass), [:true!, :veritable!, :false!, :with_argument!]
     end
 
     it "converts all methods according to the provided prefix and suffix" do

@@ -24,11 +24,11 @@ module PredicateBang
   #   suffix - The String suffix to add to end of the bangified method
   #   inlcude_super - The Boolean specifying whether to bangify parent methods
   #
-  # Returns nothing.
+  # Returns the Symbol Array of bangified method names.
   def bangify(klass, matching: DEFAULT_PATTERN, only: [], except: [], prefix: '', suffix: '', include_super: false)
     method_keys = klass.instance_methods(include_super)
     if only.empty?
-      method_keys.each do |method_key|
+      method_keys.map do |method_key|
         if method_key.to_s =~ matching && !except.include?(method_key)
           if block_given?
             bangify_method(klass, method_key, prefix: prefix, suffix: suffix, &Proc.new)
@@ -36,9 +36,9 @@ module PredicateBang
             bangify_method(klass, method_key, prefix: prefix, suffix: suffix)
           end
         end
-      end
+      end.compact
     else
-      method_keys.each do |method_key|
+      method_keys.map do |method_key|
         if only.include?(method_key)
           if block_given?
             bangify_method(klass, method_key, prefix: prefix, suffix: suffix, &Proc.new)
@@ -46,7 +46,7 @@ module PredicateBang
             bangify_method(klass, method_key, prefix: prefix, suffix: suffix)
           end
         end
-      end
+      end.compact
     end
   end
 
@@ -62,7 +62,7 @@ module PredicateBang
   #   prefix - The String prefix to add to front of the bangified method
   #   suffix - The String suffix to add to end of the bangified method
   #
-  # Returns nothing.
+  # Returns the Symbol name of the bang method created.
   def bangify_method(klass, predicate_method, prefix: '', suffix: '')
     predicate_method_string = predicate_method.to_s
     method_name_base =
@@ -96,6 +96,7 @@ module PredicateBang
         end
       end
     end
+    bang_method
   end
 
 end
