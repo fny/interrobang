@@ -20,6 +20,8 @@ module PredicateBang
   #   matching - The Regexp used to match methods that should be bangified
   #   only - The Symbol Array of methods to bangify exclusively
   #   except - The Symbol Array of methods to bangify ignore when pattern matching
+  #   only - The Symbol or Symbol Array of methods to bangify exclusively
+  #   except - The Symbol or Symbol Array of methods to ignore when pattern matching
   #   prefix - The String prefix to add to front of the bangified method
   #   suffix - The String suffix to add to end of the bangified method
   #   inlcude_super - The Boolean specifying whether to bangify parent methods
@@ -27,6 +29,8 @@ module PredicateBang
   # Returns the Symbol Array of bangified method names.
   def bangify(klass, matching: DEFAULT_PATTERN, only: [], except: [], prefix: '', suffix: '', include_super: false)
     method_keys = klass.instance_methods(include_super)
+    only = [only] unless only.is_a?(Array)
+    except = [except] unless except.is_a?(Array)
     if only.empty?
       method_keys.map do |method_key|
         if method_key.to_s =~ matching && !except.include?(method_key)

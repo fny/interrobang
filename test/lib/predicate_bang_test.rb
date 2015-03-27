@@ -137,6 +137,14 @@ describe PredicateBang do
       -> { klass.new.true! }.must_raise NoMethodError
     end
 
+    it "except option accepts a singular symbol" do
+      klass = test_class
+      PredicateBang.bangify klass, matching: %r{\Aso_.*\z}, except: :so_very_true
+      assert klass.new.so_true!
+      -> { klass.new.so_very_true! }.must_raise NoMethodError
+      -> { klass.new.true! }.must_raise NoMethodError
+    end
+
     it "converts only the methods specified in the only option" do
       klass = test_class
       PredicateBang.bangify klass, only: [:so_true]
@@ -144,6 +152,15 @@ describe PredicateBang do
       -> { klass.new.so_very_true! }.must_raise NoMethodError
       -> { klass.new.true! }.must_raise NoMethodError
     end
+
+    it "except option accepts a singular symbol" do
+      klass = test_class
+      PredicateBang.bangify klass, only: :so_true
+      assert klass.new.so_true!
+      -> { klass.new.so_very_true! }.must_raise NoMethodError
+      -> { klass.new.true! }.must_raise NoMethodError
+    end
+
 
     it "converts only the methods specified in the only option with a block" do
       klass = test_class
