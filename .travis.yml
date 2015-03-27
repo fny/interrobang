@@ -9,4 +9,4 @@ rvm:
   - rbx-2
 addons:
   code_climate:
-    repo_token: 240d93328887c5936b3af5aadca1900358cb12bdc227831b0577be2e9a89d817
+    repo_token: 6f4b7c1f44b29f414ffb9b243b1f83cf5fa40eb297b4cd0c7761bf960487a8eb
