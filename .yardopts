@@ -1,0 +1,6 @@
+--readme README.md
+--plugin tomdoc
+lib
+-
+*.md
+*.txt
