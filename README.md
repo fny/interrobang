@@ -1,7 +1,9 @@
 # Interrobang :interrobang:
 
+[![Gem Version](https://badge.fury.io/rb/interrobang.svg)](http://badge.fury.io/rb/interrobang)
 [![Build Status](https://travis-ci.org/fny/interrobang.svg?branch=master)](https://travis-ci.org/fny/interrobang)
 [![Test Coverage](https://codeclimate.com/github/fny/interrobang/badges/coverage.svg)](https://codeclimate.com/github/fny/interrobang)
+[![Inline docs](http://inch-ci.org/github/fny/interrobang.svg?branch=master)](http://inch-ci.org/github/fny/interrobang)
 
 Convert your `predicate_methods?` into `bang_methods!` without abusing `method_missing`.
 
