@@ -2,65 +2,106 @@
 
 [![Build Status](https://travis-ci.org/fny/predicate_bang.svg?branch=master)](https://travis-ci.org/fny/predicate_bang)
 [![Test Coverage](https://codeclimate.com/github/fny/predicate_bang/badges/coverage.svg)](https://codeclimate.com/github/fny/predicate_bang)
-[![Code Climate](https://codeclimate.com/github/fny/predicate_bang/badges/gpa.svg)](https://codeclimate.com/github/fny/predicate_bang)
 
-Convert your `predicate_methods?` into `bangified_predicate_methods!` without
-abusing `method_missing`.
+Convert your `predicate_methods?` into `bang_methods!` without abusing `method_missing`.
 
-Currently only works with Ruby versions that support keywords arguments.
+`PredicateBang` currently only works with Ruby versions that support keyword arguments.
 
 ## Overview
+
+Say we have the following class:
 
 ```ruby
 class Answer
   # Say these return a boolean.
   def correct?; end
   def is_correct; end
-  def is_special; end
+  def is_factual; end
+  def is_right; end
 end
+```
 
+`PredicateBang` automagically adds corresponding bang methods for any predicate methods that end in a `?`. The bang methods explode when the predicate method returns a falsey value:
+
+```ruby
 PredicateBang.bangify(Answer)
+answer = Answer.new # => [:correct!]
+answer.respond_to?(:correct!) # => true (no method missing shenanigans!)
 Answer.new.correct! # => Raises PredicateBang::FalsePredicate if `#correct?` is false
+```
 
-# Add a prefix. You can add suffixes too!
-PredicateBang.bangify(Answer, prefix: 'ensure_')
-Answer.new.ensure_correct! # => Raises PredicateBang::FalsePredicate if `#correct?` is false
+You can add prefixes and suffixes to the generated bang method:
 
-# Provide your own blocks to execute on failure. You can optionally access the
-# predicate method as an argument
+```ruby
+PredicateBang.bangify(Answer, prefix: 'ensure_', suffix: '_or_else')
+# => [:ensure_correct_or_else!]
+Answer.new.ensure_correct_or_else!
+# => Raises PredicateBang::FalsePredicate if `#correct?` is false
+```
+
+Provide your own blocks to execute on failure. You can optionally access the symbol of the predicate method as an argument:
+
+```ruby
 PredicateBang.bangify(Answer, prefix: 'ensure_') do |predicate_method|
   raise StandardError, predicate_method
-end
+end # => [:ensure_correct!]
 Answer.new.ensure_correct! # => Raises StandardError if `#correct?` is false
+```
 
-# You can even include parent methods, but proceed with caution:
-PredicateBang.bangify(Answer, include_super: true,  prefix: 'ensure_')
-Answer.new.ensure_nil! # => Raises PredicateBang::FalsePredicate
+Need to convert a single method? No problem.
 
-# Perhaps you'd like so convert methods that match a different pattern?
-PredicateBang.bangify(Answer, matching: %r{\Ais_.*\z}, except: [:is_special])
-
-# Or perhaps you'd like to explicitly state the methods to convert
-PredicateBang.bangify(Answer, only: [:is_special])
-
-# You can convert individual methods too:
+```ruby
 PredicateBang.bangify_method(Answer, :correct?, prefix: 'ensure_', suffix: '_on_saturday') do
   if Time.now.saturday?
     raise WeekendLaziness
   else
     true
   end
-end
-
-# Don't like typing PredicateBang? Just `extend` or `include` it. It's methods are
-# module_functions!
+end # => :ensure_correct_on_saturday!
 ```
 
-See `lib/predicate_bang` and the tests for more details.
+### Filters
 
-## What's a predicate method?
+Perhaps you'd like to convert methods that match a different pattern?
 
-A method that returns a Boolean. By Ruby convention, these methods typically end in a `?`. Other languages like [C#](https://msdn.microsoft.com/en-us/library/bfcke1bz%28v=vs.110%29.aspx) and [Java](https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html) support this interface too.
+```ruby
+PredicateBang.bangify(Answer, matching: %r{\Ais_.*\z})
+# => [:is_correct!, :is_factual!, :is_right!]
+```
+
+You can exclude methods that match the pattern with `except`:
+
+```ruby
+PredicateBang.bangify(Answer, matching: %r{\Ais_.*\z},
+                              except: [:is_factual,  :is_right])
+# => [:is_correct!]
+```
+
+Maybe you'd like to state the methods to convert explicitly?
+
+```ruby
+PredicateBang.bangify(Answer, only: :is_correct) # => [:is_correct!]
+```
+
+You can opt to include methods from parent classes, but proceed with caution...
+
+```ruby
+PredicateBang.bangify(Answer, include_super: true,  prefix: 'ensure_')
+# => [:ensure_correct!, :ensure_nil!, :ensure_eql!, :ensure_tainted!, :ensure_untrusted!, :ensure_frozen!, :ensure_instance_variable_defined!, :ensure_instance_of!, :ensure_kind_of!, :ensure_is_a!, :ensure_respond_to!, :ensure_equal!] 
+Answer.new.ensure_nil! # => Raises PredicateBang::FalsePredicate
+```
+
+Too lazy to type `PredicateBang`? Just `extend` it. It's methods are `module_function`s!
+
+```ruby
+class Answer
+  extend PredicateBang
+  bangify self
+  bangify_method self, :is_special
+end
+```
+
+See `lib/predicate_bang.rb` for complete documentation and the tests for details.
 
 ## Installation
 
@@ -78,6 +119,129 @@ Or install it yourself as:
 
     $ gem install predicate_bang
 
+
+## Example Use Case with Rails
+
+`PredicateBang` works wonderfully with permission-related objects. Say we have a bangified `Protector` class that defines user permissions in our application:
+
+```ruby
+class Protector
+  NotSignedIn = Class.new(Exception)
+  Unauthorized = Class.new(Exception)
+
+  def initialize(user)
+    @user = user
+  end
+
+  def signed_in?
+    @user.is_a?(User)
+  end
+
+  def admin?
+    @user && @user.is_admin
+  end
+
+  def can_edit_user?(other_user)
+    @user && (@user.is_admin || @user.id == other_user.id)
+  end
+
+  PredicateBang.bangify(self, prefix: 'ensure_') do |predicate_method|
+    raise Unauthorized, "#{predicate_method} failed"
+  end
+
+  PredicateBang.bangify_method(self, :signed_in?, prefix: 'ensure_') do |predicate_method|
+    raise NotSignedIn, "#{predicate_method} failed"
+  end
+end
+```
+
+In our controller, we can then define rescue handlers for the those exceptions, and add a method to access a `Protector` instance.
+
+```ruby
+class ApplicationController < ActionController::Base
+  def protector
+    @protector ||= Protector.new(current_user)
+  end
+
+  rescue_from Protector::NotSignedIn do
+    redirect_to sign_in_path, alert: "Please sign in to continue."
+  end
+
+  rescue_from Protector::Unauthorized do
+    # Handle as you will
+  end
+end
+```
+
+Now we can call `protector.ensure_signed_in!`, `protector.ensure_admin!`, `protector.ensure_can_edit!(other_user)!` from any controller and trigger the errors defined with `PredicateBang`.
+
+### Aside: Testing Tricks with Rescue Handlers
+
+For tests, we can stub the rescue handlers with methods that expose the original errors so we can check for them directly.
+
+```ruby
+# spec/support/helpers.rb
+def raise_handled_rescues(controller = ApplicationController)
+  stubbed_handlers = controller.rescue_handlers.map { |rescue_handler|
+    name, proc = rescue_handler
+    [ name, -> { raise Kernel.const_get(name) } ]
+  }
+  allow(controller).to receive(:rescue_handlers).and_return(stubbed_handlers)
+end
+```
+
+This allows us to test that proper errors are being raised independently from testing each error's particular handling.
+
+```ruby
+# spec/controllers/users_controller_spec.rb
+RSpec.describe UsersController, type: :controller do
+  before { raise_handled_rescues }
+  after { reset_handled_rescues }
+  describe "GET index" do
+    context "unauthenticated user" do
+      it "raises Protector::NotSignedIn" do
+        expect { get :index }.to raise_error(Protector::NotSignedIn)
+      end
+    end
+  end
+end
+
+# spec/controllers/application_controller_spec.rb
+RSpec.describe ApplicationController, type: :controller do
+  describe "Protector::NotSignedIn rescue handler" do
+    controller { def index; raise Protector::NotSignedIn; end }
+    it "redirects to the sign in page" do
+      get :index
+      expect(response).to redirect_to sign_in_path
+    end
+  end
+end
+```
+
+## What are these predicate methods and bang methods?
+
+**Predicate methods** return a Boolean. By Ruby convention, these methods typically end in a `?`. Other languages like [Scheme][scheme-conventions], [C#][csharp-predicates], [Java][java-predicates], support this interface too.
+
+**Bang methods** are "dangerous" or modify the receiver. By convention, these methods typically end with a `!`. In the case of `PredicateBang`, these methods are considered "dangerous" because they may raise an exception.
+
+### Fun Fact
+
+The Ruby conventions for `?` and `!`  are borrowed from [Scheme][scheme-conventions]:
+
+> 1.3.5  Naming conventions
+>
+>
+> By convention, the names of procedures that always return a boolean value usually end in ``?''. Such procedures are called predicates.
+>
+> By convention, the names of procedures that store values into previously
+> allocated locations (see section 3.4) usually end in ``!''. Such procedures
+> are called mutation procedures. By convention, the value returned by a 
+> mutation procedure is unspecified.
+
+## Development
+
+Be sure to test all the things. Just `rake test`. You can use `bundle console` to play with things in an IRB session.
+
 ## Contributing
 
 1. Fork it ( https://github.com/fny/predicate_bang/fork )
@@ -85,3 +249,18 @@ Or install it yourself as:
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Special Thanks To...
+
+ - [Discourse][discourse] for inspiring me to find a `method_missing`-free alternative to its [EnsureMagic][discourse-ensure]
+ - [Michael Josephson][josephson] for [pointing me in the right direction][so-question]
+ - To all [contributers][github-contributers]! :beers:
+
+[csharp-predicates]: https://msdn.microsoft.com/en-us/library/bfcke1bz%28v=vs.110%29.aspx "Predicate<T> Delegate"
+[java-predicates]: https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html "Interface Predicate<T>"
+[scheme-conventions]: http://www.schemers.org/Documents/Standards/R5RS/HTML/r5rs-Z-H-4.html#%_sec_1.3.5 "Scheme Naming Conventions"
+[discourse]: http://discourse.org "Discourse"
+[discourse-ensure]: https://github.com/discourse/discourse/blob/ba0084edee8ace004855b987e1661a7eaff60122/lib/guardian/ensure_magic.rb "module EnsureMagic"
+[josephson]: http://www.josephson.org/ "Michael Josephson"
+[so-question]: http://stackoverflow.com/questions/28818193/define-method-based-on-existing-method-in-ruby "Define Method Based on Existing Method in Ruby - Stack Overflow"
+[github-contributers]: https://github.com/fny/predicate_bang/graphs/contributors "Predicate Bang Contributers - GitHub"
