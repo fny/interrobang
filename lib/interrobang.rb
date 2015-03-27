@@ -1,7 +1,7 @@
-require 'predicate_bang/version'
+require 'interrobang/version'
 
 # Convert your `#predicate_methods?` to `#bang_methods!`
-module PredicateBang
+module Interrobang
   # Exception to raise when no block is provided for bangified falsey methods
   FalsePredicate = Class.new(Exception)
 
@@ -93,7 +93,7 @@ module PredicateBang
           if send(predicate_method, *args, &block)
             true
           else
-            raise(PredicateBang::FalsePredicate, "#{predicate_method} is false")
+            raise(Interrobang::FalsePredicate, "#{predicate_method} is false")
           end
         end
       end

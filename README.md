@@ -1,11 +1,11 @@
-# PredicateBang
+# Interrobang :interrobang:
 
-[![Build Status](https://travis-ci.org/fny/predicate_bang.svg?branch=master)](https://travis-ci.org/fny/predicate_bang)
-[![Test Coverage](https://codeclimate.com/github/fny/predicate_bang/badges/coverage.svg)](https://codeclimate.com/github/fny/predicate_bang)
+[![Build Status](https://travis-ci.org/fny/interrobang.svg?branch=master)](https://travis-ci.org/fny/interrobang)
+[![Test Coverage](https://codeclimate.com/github/fny/interrobang/badges/coverage.svg)](https://codeclimate.com/github/fny/interrobang)
 
 Convert your `predicate_methods?` into `bang_methods!` without abusing `method_missing`.
 
-`PredicateBang` currently only works with Ruby versions that support keyword arguments.
+`Interrobang` currently only works with Ruby versions that support keyword arguments.
 
 ## Overview
 
@@ -21,28 +21,28 @@ class Answer
 end
 ```
 
-`PredicateBang` automagically adds corresponding bang methods for any predicate methods that end in a `?`. The bang methods explode when the predicate method returns a falsey value:
+`Interrobang` automagically adds corresponding bang methods for any predicate methods that end in a `?`. The bang methods explode when the predicate method returns a falsey value.
 
 ```ruby
-PredicateBang.bangify(Answer)
+Interrobang.bangify(Answer)
 answer = Answer.new # => [:correct!]
 answer.respond_to?(:correct!) # => true (no method missing shenanigans!)
-Answer.new.correct! # => Raises PredicateBang::FalsePredicate if `#correct?` is false
+Answer.new.correct! # => Raises Interrobang::FalsePredicate if `#correct?` is false
 ```
 
-You can add prefixes and suffixes to the generated bang method:
+You can add prefixes and suffixes to the generated bang method.
 
 ```ruby
-PredicateBang.bangify(Answer, prefix: 'ensure_', suffix: '_or_else')
+Interrobang.bangify(Answer, prefix: 'ensure_', suffix: '_or_else')
 # => [:ensure_correct_or_else!]
 Answer.new.ensure_correct_or_else!
-# => Raises PredicateBang::FalsePredicate if `#correct?` is false
+# => Raises Interrobang::FalsePredicate if `#correct?` is false
 ```
 
-Provide your own blocks to execute on failure. You can optionally access the symbol of the predicate method as an argument:
+Provide your own blocks to execute on failure. You can optionally access the symbol of the predicate method as an argument.
 
 ```ruby
-PredicateBang.bangify(Answer, prefix: 'ensure_') do |predicate_method|
+Interrobang.bangify(Answer, prefix: 'ensure_') do |predicate_method|
   raise StandardError, predicate_method
 end # => [:ensure_correct!]
 Answer.new.ensure_correct! # => Raises StandardError if `#correct?` is false
@@ -51,7 +51,7 @@ Answer.new.ensure_correct! # => Raises StandardError if `#correct?` is false
 Need to convert a single method? No problem.
 
 ```ruby
-PredicateBang.bangify_method(Answer, :correct?, prefix: 'ensure_', suffix: '_on_saturday') do
+Interrobang.bangify_method(Answer, :correct?, prefix: 'ensure_', suffix: '_on_saturday') do
   if Time.now.saturday?
     raise WeekendLaziness
   else
@@ -65,14 +65,14 @@ end # => :ensure_correct_on_saturday!
 Perhaps you'd like to convert methods that match a different pattern?
 
 ```ruby
-PredicateBang.bangify(Answer, matching: %r{\Ais_.*\z})
+Interrobang.bangify(Answer, matching: %r{\Ais_.*\z})
 # => [:is_correct!, :is_factual!, :is_right!]
 ```
 
-You can exclude methods that match the pattern with `except`:
+You can exclude methods that match the pattern with `except`.
 
 ```ruby
-PredicateBang.bangify(Answer, matching: %r{\Ais_.*\z},
+Interrobang.bangify(Answer, matching: %r{\Ais_.*\z},
                               except: [:is_factual,  :is_right])
 # => [:is_correct!]
 ```
@@ -80,35 +80,35 @@ PredicateBang.bangify(Answer, matching: %r{\Ais_.*\z},
 Maybe you'd like to state the methods to convert explicitly?
 
 ```ruby
-PredicateBang.bangify(Answer, only: :is_correct) # => [:is_correct!]
+Interrobang.bangify(Answer, only: :is_correct) # => [:is_correct!]
 ```
 
 You can opt to include methods from parent classes, but proceed with caution...
 
 ```ruby
-PredicateBang.bangify(Answer, include_super: true,  prefix: 'ensure_')
+Interrobang.bangify(Answer, include_super: true,  prefix: 'ensure_')
 # => [:ensure_correct!, :ensure_nil!, :ensure_eql!, :ensure_tainted!, :ensure_untrusted!, :ensure_frozen!, :ensure_instance_variable_defined!, :ensure_instance_of!, :ensure_kind_of!, :ensure_is_a!, :ensure_respond_to!, :ensure_equal!] 
-Answer.new.ensure_nil! # => Raises PredicateBang::FalsePredicate
+Answer.new.ensure_nil! # => Raises Interrobang::FalsePredicate
 ```
 
-Too lazy to type `PredicateBang`? Just `extend` it. It's methods are `module_function`s!
+Too lazy to type `Interrobang`? Just `extend` it. It's methods are `module_function`s!
 
 ```ruby
 class Answer
-  extend PredicateBang
+  extend Interrobang
   bangify self
   bangify_method self, :is_special
 end
 ```
 
-See `lib/predicate_bang.rb` for complete documentation and the tests for details.
+See `lib/interrobang.rb` for complete documentation and the tests for details.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'predicate_bang'
+gem 'interrobang'
 ```
 
 And then execute:
@@ -117,12 +117,12 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install predicate_bang
+    $ gem install interrobang
 
 
 ## Example Use Case with Rails
 
-`PredicateBang` works wonderfully with permission-related objects. Say we have a bangified `Protector` class that defines user permissions in our application:
+`Interrobang` works wonderfully with permission-related objects. Say we have a bangified `Protector` class that defines user permissions in our application:
 
 ```ruby
 class Protector
@@ -145,11 +145,11 @@ class Protector
     @user && (@user.is_admin || @user.id == other_user.id)
   end
 
-  PredicateBang.bangify(self, prefix: 'ensure_') do |predicate_method|
+  Interrobang.bangify(self, prefix: 'ensure_') do |predicate_method|
     raise Unauthorized, "#{predicate_method} failed"
   end
 
-  PredicateBang.bangify_method(self, :signed_in?, prefix: 'ensure_') do |predicate_method|
+  Interrobang.bangify_method(self, :signed_in?, prefix: 'ensure_') do |predicate_method|
     raise NotSignedIn, "#{predicate_method} failed"
   end
 end
@@ -173,7 +173,7 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-Now we can call `protector.ensure_signed_in!`, `protector.ensure_admin!`, `protector.ensure_can_edit!(other_user)!` from any controller and trigger the errors defined with `PredicateBang`.
+Now we can call `protector.ensure_signed_in!`, `protector.ensure_admin!`, `protector.ensure_can_edit!(other_user)!` from any controller and trigger the errors defined with `Interrobang`.
 
 ### Aside: Testing Tricks with Rescue Handlers
 
@@ -222,7 +222,7 @@ end
 
 **Predicate methods** return a Boolean. By Ruby convention, these methods typically end in a `?`. Other languages like [Scheme][scheme-conventions], [C#][csharp-predicates], [Java][java-predicates], support this interface too.
 
-**Bang methods** are "dangerous" or modify the receiver. By convention, these methods typically end with a `!`. In the case of `PredicateBang`, these methods are considered "dangerous" because they may raise an exception.
+**Bang methods** are "dangerous" or modify the receiver. By convention, these methods typically end with a `!`. In the case of `Interrobang`, these methods are considered "dangerous" because they may raise an exception.
 
 ### Fun Fact
 
@@ -244,7 +244,7 @@ Be sure to test all the things. Just `rake test`. You can use `bundle console` t
 
 ## Contributing
 
-1. Fork it ( https://github.com/fny/predicate_bang/fork )
+1. Fork it ( https://github.com/fny/interrobang/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -263,4 +263,4 @@ Be sure to test all the things. Just `rake test`. You can use `bundle console` t
 [discourse-ensure]: https://github.com/discourse/discourse/blob/ba0084edee8ace004855b987e1661a7eaff60122/lib/guardian/ensure_magic.rb "module EnsureMagic"
 [josephson]: http://www.josephson.org/ "Michael Josephson"
 [so-question]: http://stackoverflow.com/questions/28818193/define-method-based-on-existing-method-in-ruby "Define Method Based on Existing Method in Ruby - Stack Overflow"
-[github-contributers]: https://github.com/fny/predicate_bang/graphs/contributors "Predicate Bang Contributers - GitHub"
+[github-contributers]: https://github.com/fny/interrobang/graphs/contributors "Predicate Bang Contributers - GitHub"

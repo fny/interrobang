@@ -1,3 +1,3 @@
-module PredicateBang
+module Interrobang
   VERSION = '0.2.0'
 end

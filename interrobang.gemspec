@@ -1,18 +1,18 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'predicate_bang/version'
+require 'interrobang/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'predicate_bang'
-  spec.version       = PredicateBang::VERSION
+  spec.name          = 'interrobang'
+  spec.version       = Interrobang::VERSION
   spec.authors       = ["Faraz Yashar"]
   spec.email         = ["faraz.yashar@gmail.com"]
   spec.summary       = "Convert your predicate_methods? into bang_methods! without
 abusing method_missing"
   spec.description   = "Convert your predicate_methods? into bang_methods! without
 abusing method_missing."
-  spec.homepage      = 'https://github.com/fny/predicate_bang'
+  spec.homepage      = 'https://github.com/fny/interrobang'
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
