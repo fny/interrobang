@@ -111,7 +111,7 @@ describe Interrobang do
 
     it "returns an array of symbols of the bangified methods" do
       klass = test_class
-      assert_equal Interrobang.bangify(klass), [:true!, :veritable!, :false!, :with_argument!]
+      assert_equal Interrobang.bangify(klass).sort, [:true!, :veritable!, :false!, :with_argument!].sort
     end
 
     it "converts all methods according to the provided prefix and suffix" do
