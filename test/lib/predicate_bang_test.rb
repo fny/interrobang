@@ -161,13 +161,11 @@ describe PredicateBang do
       -> { klass.new.true! }.must_raise NoMethodError
     end
 
-
     it "converts only the methods specified in the only option with a block" do
       klass = test_class
       PredicateBang.bangify klass, only: [:so_false] do
         raise SomeError
       end
-
       -> { klass.new.so_false! }.must_raise SomeError
       -> { klass.new.so_true! }.must_raise NoMethodError
       -> { klass.new.true! }.must_raise NoMethodError
@@ -187,6 +185,5 @@ describe PredicateBang do
       PredicateBang.bangify klass, include_super: true, prefix: 'ensure_'
       -> { klass.new.ensure_nil! }.must_raise PredicateBang::FalsePredicate
     end
-
   end
 end
