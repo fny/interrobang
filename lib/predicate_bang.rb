@@ -10,16 +10,14 @@ module PredicateBang
 
   module_function
 
-  # Converts the specified predicate methods in a class to to bang methods
+  # Converts the specified predicate methods in a class to bang methods.
   #
   # klass - The Class to target for bangification
   # block - An optional block to run if a predicate method returns something falsey
   #
   # Options
   #
-  #   matching - The Regexp used to match methods that should be bangified
-  #   only - The Symbol Array of methods to bangify exclusively
-  #   except - The Symbol Array of methods to bangify ignore when pattern matching
+  #   matching - The Regexp used to match methods that should be bangified; defaults to DEFAULT_PATTERN
   #   only - The Symbol or Symbol Array of methods to bangify exclusively
   #   except - The Symbol or Symbol Array of methods to ignore when pattern matching
   #   prefix - The String prefix to add to front of the bangified method
@@ -54,7 +52,7 @@ module PredicateBang
     end
   end
 
-  # Converts the specified predicate method to a bang method
+  # Converts the specified predicate method to a bang method.
   #
   # klass - The Class to target for bangification
   # predicate_method - The Symbol of the predicate method
@@ -102,5 +100,4 @@ module PredicateBang
     end
     bang_method
   end
-
 end
