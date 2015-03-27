@@ -8,10 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = PredicateBang::VERSION
   spec.authors       = ["Faraz Yashar"]
   spec.email         = ["faraz.yashar@gmail.com"]
-  spec.summary       = %q{Convert your `predicate_methods?` into `bangified_predicate_methods!` without
-abusing `method_missing`}
-  spec.description   = %q{Convert your `predicate_methods?` into `bangified_predicate_methods!` without
-abusing `method_missing`.}
+  spec.summary       = "Convert your predicate_methods? into bang_methods! without
+abusing method_missing"
+  spec.description   = "Convert your predicate_methods? into bang_methods! without
+abusing method_missing."
   spec.homepage      = 'https://github.com/fny/predicate_bang'
   spec.license       = "MIT"
 
