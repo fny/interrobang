@@ -10,6 +10,24 @@ module Interrobang
 
   module_function
 
+  # Wrapper method for `bangify_class` and `bangify_method`. The appropriate
+  # method will be called depending on the method signature.
+  #
+  # Examples
+  #
+  #     Interrobang.bangify(Answer) # => [:correct!]
+  #     Interrobang.bangify(Answer, :is_correct) # => :is_correct!
+  #
+  # Returns either a Symbol or Symbol Array of bangified method names.
+  def bangify(*args, **keywords, &block)
+    klass, method = args
+    if method
+      bangify_method(klass, method, **keywords, &block)
+    else
+      bangify_class(klass, **keywords, &block)
+    end
+  end
+
   # Converts the specified predicate methods in a class to bang methods.
   #
   # klass - The Class to target for bangification
@@ -25,7 +43,7 @@ module Interrobang
   #   inlcude_super - The Boolean specifying whether to bangify parent methods
   #
   # Returns the Symbol Array of bangified method names.
-  def bangify(klass, matching: DEFAULT_PATTERN, only: [], except: [], prefix: '', suffix: '', include_super: false)
+  def bangify_class(klass, matching: DEFAULT_PATTERN, only: [], except: [], prefix: '', suffix: '', include_super: false)
     method_keys = klass.instance_methods(include_super)
     only = [only] unless only.is_a?(Array)
     except = [except] unless except.is_a?(Array)
@@ -100,4 +118,9 @@ module Interrobang
     end
     bang_method
   end
+end
+
+# Alias for `Interrobang.bangify`
+def Interrobang(*args, &block)
+  Interrobang.bangify(*args, &block)
 end

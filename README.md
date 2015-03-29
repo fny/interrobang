@@ -26,8 +26,12 @@ end
 `Interrobang` automagically adds corresponding bang methods for any predicate methods that end in a `?`. The bang methods explode when the predicate method returns a falsey value.
 
 ```ruby
-Interrobang.bangify(Answer)
-answer = Answer.new # => [:correct!]
+# Pick your poison...
+Interrobang(Answer) # => [:correct!]
+Interrobang.bangify(Answer) # => [:correct!]
+Interrobang.bangify_class(Answer) # => [:correct!]
+
+answer = Answer.new 
 answer.respond_to?(:correct!) # => true (no method missing shenanigans!)
 Answer.new.correct! # => Raises Interrobang::FalsePredicate if `#correct?` is false
 ```
@@ -35,7 +39,7 @@ Answer.new.correct! # => Raises Interrobang::FalsePredicate if `#correct?` is fa
 You can add prefixes and suffixes to the generated bang method.
 
 ```ruby
-Interrobang.bangify(Answer, prefix: 'ensure_', suffix: '_or_else')
+Interrobang(Answer, prefix: 'ensure_', suffix: '_or_else')
 # => [:ensure_correct_or_else!]
 Answer.new.ensure_correct_or_else!
 # => Raises Interrobang::FalsePredicate if `#correct?` is false
@@ -44,7 +48,7 @@ Answer.new.ensure_correct_or_else!
 Provide your own blocks to execute on failure. You can optionally access the symbol of the predicate method as an argument.
 
 ```ruby
-Interrobang.bangify(Answer, prefix: 'ensure_') do |predicate_method|
+Interrobang(Answer, prefix: 'ensure_') do |predicate_method|
   raise StandardError, predicate_method
 end # => [:ensure_correct!]
 Answer.new.ensure_correct! # => Raises StandardError if `#correct?` is false
@@ -53,13 +57,20 @@ Answer.new.ensure_correct! # => Raises StandardError if `#correct?` is false
 Need to convert a single method? No problem.
 
 ```ruby
-Interrobang.bangify_method(Answer, :correct?, prefix: 'ensure_', suffix: '_on_saturday') do
+# Pick your poison...
+Interrobang(Answer, :correct?) # => :correct!
+Interrobang.bangify(Answer, :correct?) # => :correct!
+Interrobang.bangify_method(Answer, :correct?) # => :correct!
+
+Interrobang(Answer, :correct?, prefix: 'ensure_', suffix: '_on_saturday') do
   if Time.now.saturday?
     raise WeekendLaziness
   else
     true
   end
 end # => :ensure_correct_on_saturday!
+
+
 ```
 
 ### Filters
@@ -67,14 +78,14 @@ end # => :ensure_correct_on_saturday!
 Perhaps you'd like to convert methods that match a different pattern?
 
 ```ruby
-Interrobang.bangify(Answer, matching: %r{\Ais_.*\z})
+Interrobang(Answer, matching: %r{\Ais_.*\z})
 # => [:is_correct!, :is_factual!, :is_right!]
 ```
 
 You can exclude methods that match the pattern with `except`.
 
 ```ruby
-Interrobang.bangify(Answer, matching: %r{\Ais_.*\z},
+Interrobang(Answer, matching: %r{\Ais_.*\z},
                               except: [:is_factual,  :is_right])
 # => [:is_correct!]
 ```
@@ -82,24 +93,24 @@ Interrobang.bangify(Answer, matching: %r{\Ais_.*\z},
 Maybe you'd like to state the methods to convert explicitly?
 
 ```ruby
-Interrobang.bangify(Answer, only: :is_correct) # => [:is_correct!]
+Interrobang(Answer, only: :is_correct) # => [:is_correct!]
 ```
 
 You can opt to include methods from parent classes, but proceed with caution...
 
 ```ruby
-Interrobang.bangify(Answer, include_super: true,  prefix: 'ensure_')
+Interrobang(Answer, include_super: true,  prefix: 'ensure_')
 # => [:ensure_correct!, :ensure_nil!, :ensure_eql!, :ensure_tainted!, :ensure_untrusted!, :ensure_frozen!, :ensure_instance_variable_defined!, :ensure_instance_of!, :ensure_kind_of!, :ensure_is_a!, :ensure_respond_to!, :ensure_equal!] 
 Answer.new.ensure_nil! # => Raises Interrobang::FalsePredicate
 ```
 
-Too lazy to type `Interrobang`? Just `extend` it. It's methods are `module_function`s!
+Too lazy to type `Interrobang` a few timews? Just `extend` it. It's methods are `module_function`s.
 
 ```ruby
 class Answer
   extend Interrobang
-  bangify self
-  bangify_method self, :is_special
+  bangify_method self, :is_correct
+  bangify_method self, :is_correct, prefix: 'ensure_'
 end
 ```
 
@@ -147,11 +158,11 @@ class Protector
     @user && (@user.is_admin || @user.id == other_user.id)
   end
 
-  Interrobang.bangify(self, prefix: 'ensure_') do |predicate_method|
+  Interrobang(self, prefix: 'ensure_') do |predicate_method|
     raise Unauthorized, "#{predicate_method} failed"
   end
 
-  Interrobang.bangify_method(self, :signed_in?, prefix: 'ensure_') do |predicate_method|
+  Interrobang(self, :signed_in?, prefix: 'ensure_') do |predicate_method|
     raise NotSignedIn, "#{predicate_method} failed"
   end
 end
