@@ -43,30 +43,18 @@ module Interrobang
   #   inlcude_super - The Boolean specifying whether to bangify parent methods
   #
   # Returns the Symbol Array of bangified method names.
-  def bangify_class(klass, matching: DEFAULT_PATTERN, only: [], except: [], prefix: '', suffix: '', include_super: false)
+  def bangify_class(klass, matching: DEFAULT_PATTERN, only: [], except: [], prefix: '', suffix: '', include_super: false, &block)
     method_keys = klass.instance_methods(include_super)
     only = [only] unless only.is_a?(Array)
     except = [except] unless except.is_a?(Array)
-    if only.empty?
-      method_keys.map do |method_key|
-        if method_key.to_s =~ matching && !except.include?(method_key)
-          if block_given?
-            bangify_method(klass, method_key, prefix: prefix, suffix: suffix, &Proc.new)
-          else
-            bangify_method(klass, method_key, prefix: prefix, suffix: suffix)
-          end
-        end
-      end.compact
-    else
-      method_keys.map do |method_key|
-        if only.include?(method_key)
-          if block_given?
-            bangify_method(klass, method_key, prefix: prefix, suffix: suffix, &Proc.new)
-          else
-            bangify_method(klass, method_key, prefix: prefix, suffix: suffix)
-          end
-        end
-      end.compact
+    methods_to_bangify =
+      if only.empty?
+        (method_keys - except).select { |method_key| method_key.to_s =~ matching }
+      else
+        method_keys & only
+      end
+    methods_to_bangify.map do |method_key|
+      bangify_method(klass, method_key, prefix: prefix, suffix: suffix, &block)
     end
   end
 
