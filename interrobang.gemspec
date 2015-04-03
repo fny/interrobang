@@ -8,8 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Interrobang::VERSION
   spec.authors       = ["Faraz Yashar"]
   spec.email         = ["faraz.yashar@gmail.com"]
-  spec.summary       = "Convert your predicate_methods? into bang_methods! without
-abusing method_missing"
+  spec.summary       = "Convert your predicate_methods? into bang_methods!"
   spec.description   = "Convert your predicate_methods? into bang_methods! without
 abusing method_missing."
   spec.homepage      = 'https://github.com/fny/interrobang'
