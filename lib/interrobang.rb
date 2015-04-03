@@ -102,7 +102,7 @@ module Interrobang
           if send(predicate_method, *args, &block)
             true
           else
-            raise(Interrobang::FalsePredicate, "#{predicate_method} is false")
+            fail Interrobang::FalsePredicate, "#{predicate_method} is false"
           end
         end
       end
