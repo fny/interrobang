@@ -1,7 +1,5 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-SomeError = Class.new(Exception)
-
 describe Interrobang do
   let(:klass) do
     Class.new {
@@ -16,6 +14,8 @@ describe Interrobang do
       def with_argument?(bool); bool; end
     }
   end
+
+  SomeError = Class.new(StandardError)
 
   #
   # Bangify Class
