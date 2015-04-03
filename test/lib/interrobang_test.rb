@@ -17,6 +17,11 @@ def test_class
 end
 
 describe Interrobang do
+
+  #
+  # Bangify Class
+  #
+
   bangify_class_signatures = {
     '#Interrobang' =>
       -> (*args, &block) { Interrobang(*args, &block) },
@@ -113,6 +118,10 @@ describe Interrobang do
     end
   end
 
+  #
+  # Bangify Method
+  #
+
   bangify_method_signatures = {
     '#Interrobang' =>
       -> (*args, &block) { Interrobang(*args, &block) },
@@ -129,6 +138,7 @@ describe Interrobang do
           method_block.call(klass, :true?)
           assert klass.new.true!
         end
+
         it "has no method missing shenanigans" do
           klass = test_class
           method_block.call(klass, :true?)
@@ -212,6 +222,10 @@ describe Interrobang do
       end
     end
   end
+
+  #
+  # Everything Else
+  #
 
   it "is extendable" do
     class Answer

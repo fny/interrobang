@@ -123,11 +123,9 @@ class Answer
 end
 ```
 
-
 ### Details
 
 See `lib/interrobang.rb` for complete documentation and the tests for details.
-
 
 ## Installation
 
@@ -144,7 +142,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install interrobang
-
 
 ## Example Use Case with Rails
 
