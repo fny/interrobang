@@ -97,12 +97,11 @@ Interrobang(Answer, matching: %r{\Ais_.*\z})
 You can exclude methods that match the pattern with `except`.
 
 ```ruby
-Interrobang(Answer, matching: %r{\Ais_.*\z},
-                              except: [:is_factual,  :is_right])
+Interrobang(Answer, matching: %r{\Ais_.*\z}, except: [:is_factual,  :is_right])
 # => [:is_correct!]
 ```
 
-Maybe you'd like to state the methods to convert explicitly?
+Maybe you'd like to state the methods to convert explicitly? Use `only`. This will override the pattern or any exclusions.
 
 ```ruby
 Interrobang(Answer, only: :is_correct) # => [:is_correct!]
@@ -116,7 +115,7 @@ Interrobang(Answer, include_super: true,  prefix: 'ensure_')
 Answer.new.ensure_nil! # => Raises Interrobang::FalsePredicate
 ```
 
-Too lazy to type `Interrobang` a few timews? Just `extend` it. It's methods are `module_function`s.
+Too lazy to type `Interrobang` a few times? Just `extend` it. It's methods are `module_function`s.
 
 ```ruby
 class Answer
