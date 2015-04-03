@@ -3,7 +3,7 @@ require 'interrobang/version'
 # Convert your `#predicate_methods?` to `#bang_methods!`
 module Interrobang
   # Exception to raise when no block is provided for bangified falsey methods
-  FalsePredicate = Class.new(Exception)
+  FalsePredicate = Class.new(StandardError)
 
   # Regexp that matches methods that end in question marks.
   DEFAULT_PATTERN = %r{\A[^?]+\?\z}

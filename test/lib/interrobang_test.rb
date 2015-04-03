@@ -238,4 +238,9 @@ describe Interrobang do
     -> { Answer.new.correct! }.must_raise(Interrobang::FalsePredicate)
   end
 
+  describe Interrobang::FalsePredicate do
+    it "can be rescued without specifying an exception" do
+      assert begin raise(Interrobang::FalsePredicate); rescue; true; end
+    end
+  end
 end
