@@ -73,7 +73,7 @@ module Interrobang
   #   suffix - The String suffix to add to end of the bangified method
   #
   # Returns the Symbol name of the bang method created or nil if the method
-  # was not bangified (ends in `!` or `-`.)
+  # was not bangified (ends in `!` or `=`.)
   def bangify_method(klass, predicate_method, prefix: '', suffix: '')
     predicate_method_string = predicate_method.to_s
     method_name_base =
