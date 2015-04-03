@@ -69,8 +69,17 @@ Interrobang(Answer, :correct?, prefix: 'ensure_', suffix: '_on_saturday') do
     true
   end
 end # => :ensure_correct_on_saturday!
+```
 
+Beware! `Interrobang` will bangify undefined methods too that classes driven by `method_missing` can be converted too.
 
+```ruby
+class NaySayer
+  def method_missing(method, *args, &block)
+    false
+  end
+end
+Interrobang(NaySayer, :correct?) # => :correct!
 ```
 
 ### Filters
@@ -114,7 +123,11 @@ class Answer
 end
 ```
 
+
+### Details
+
 See `lib/interrobang.rb` for complete documentation and the tests for details.
+
 
 ## Installation
 

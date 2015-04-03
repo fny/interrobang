@@ -58,7 +58,8 @@ module Interrobang
     end
   end
 
-  # Converts the specified predicate method to a bang method.
+  # Converts the specified predicate method to a bang method. Beware: bang
+  # methods will be created for undefined methods too.
   #
   # klass - The Class to target for bangification
   # predicate_method - The Symbol of the predicate method

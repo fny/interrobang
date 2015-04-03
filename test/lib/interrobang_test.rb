@@ -167,6 +167,12 @@ describe Interrobang do
         assert_equal klass.new.bang!, '!'
       end
 
+      it "converts undefined methods" do
+        klass = test_class
+        method_block.call(klass, :is_not_defined)
+        assert klass.new.respond_to?(:is_not_defined!)
+      end
+
       describe "options" do
         it "adds any provided prefix or suffix to the bang method" do
           klass = test_class
