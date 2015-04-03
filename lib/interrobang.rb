@@ -59,7 +59,8 @@ module Interrobang
   end
 
   # Converts the specified predicate method to a bang method. Beware: bang
-  # methods will be created for undefined methods too.
+  # methods will be created for undefined methods too. Assignment methods (`method=`)
+  # and bang methods (`method!`) will not be converted.
   #
   # klass - The Class to target for bangification
   # predicate_method - The Symbol of the predicate method
@@ -71,7 +72,8 @@ module Interrobang
   #   prefix - The String prefix to add to front of the bangified method
   #   suffix - The String suffix to add to end of the bangified method
   #
-  # Returns the Symbol name of the bang method created.
+  # Returns the Symbol name of the bang method created or nil if the method
+  # was not bangified (ends in `!` or `-`.)
   def bangify_method(klass, predicate_method, prefix: '', suffix: '')
     predicate_method_string = predicate_method.to_s
     method_name_base =

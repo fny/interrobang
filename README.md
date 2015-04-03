@@ -83,6 +83,8 @@ end
 Interrobang(NaySayer, :correct?) # => :correct!
 ```
 
+`Interrobang` returns `nil` instead of converting `bang_methods!` or `assignment_methods`.
+
 ### Filters
 
 Perhaps you'd like to convert methods that match a different pattern?
