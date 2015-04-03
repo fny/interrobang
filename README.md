@@ -24,7 +24,7 @@ class Answer
 end
 ```
 
-`Interrobang` automagically adds corresponding bang methods for any predicate methods that end in a `?`. The bang methods explode when the predicate method returns a falsey value.
+`Interrobang` automagically adds corresponding bang methods for any predicate methods that end in a `?`. The bang methods explode when the predicate method returns a falsey value and otherwise return true.
 
 ```ruby
 # Pick your poison...
