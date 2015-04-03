@@ -79,9 +79,9 @@ module Interrobang
       when '=', '!'
         return
       when '?'
-        predicate_method.to_s[0..-2]
+        predicate_method_string[0..-2]
       else
-        predicate_method.to_s
+        predicate_method_string
       end
 
     bang_method = :"#{prefix}#{method_name_base}#{suffix}!"
