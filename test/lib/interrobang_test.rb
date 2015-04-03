@@ -163,6 +163,15 @@ describe Interrobang do
         assert klass.new.respond_to?(:is_not_defined!)
       end
 
+      it "raises errors with a message about the false predicate" do
+        bangify_method.call(klass, :false?)
+        begin
+          klass.new.false!
+        rescue Exception => e
+          assert_equal e.message, "false? is false"
+        end
+      end
+
       describe "options" do
         it "adds any provided prefix or suffix to the bang method" do
           bangify_method.call(klass, :true?, prefix: 'prefix_', suffix: '_suffix')
