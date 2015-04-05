@@ -34,7 +34,7 @@ Interrobang.bangify_class(Answer) # => [:correct!]
 
 answer = Answer.new 
 answer.respond_to?(:correct!) # => true (no method missing shenanigans!)
-Answer.new.correct! # => Raises Interrobang::FalsePredicate if `#correct?` is false
+answer.correct! # => Raises Interrobang::FalsePredicate if `#correct?` is false
 ```
 
 You can add prefixes and suffixes to the generated bang method.
@@ -111,7 +111,7 @@ You can opt to include methods from parent classes, but proceed with caution...
 
 ```ruby
 Interrobang(Answer, include_super: true,  prefix: 'ensure_')
-# => [:ensure_correct!, :ensure_nil!, :ensure_eql!, :ensure_tainted!, :ensure_untrusted!, :ensure_frozen!, :ensure_instance_variable_defined!, :ensure_instance_of!, :ensure_kind_of!, :ensure_is_a!, :ensure_respond_to!, :ensure_equal!] 
+# => [:ensure_correct!, :ensure_nil!, :ensure_eql!, :ensure_tainted!, :ensure_untrusted!, :ensure_frozen!, :ensure_instance_variable_defined!, :ensure_instance_of!, :ensure_kind_of!, :ensure_is_a!, :ensure_respond_to!, :ensure_equal!]
 Answer.new.ensure_nil! # => Raises Interrobang::FalsePredicate
 ```
 
@@ -269,7 +269,7 @@ Be sure to test all the things. Just `rake test`. You can use `bundle console` t
 
 ## Contributing
 
-1. Fork it ( https://github.com/fny/interrobang/fork )
+1. Fork it (https://github.com/fny/interrobang/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
