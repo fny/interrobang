@@ -120,8 +120,8 @@ Too lazy to type `Interrobang` a few times? Just `extend` it. It's methods are `
 ```ruby
 class Answer
   extend Interrobang
-  bangify_method self, :is_correct
-  bangify_method self, :is_correct, prefix: 'ensure_'
+  bangify self, :is_correct
+  bangify self, :is_correct, prefix: 'ensure_'
 end
 ```
 
