@@ -81,7 +81,7 @@ class NaySayer
   end
 end
 Interrobang(NaySayer, :correct?) # => :correct!
-NaySayer.correct! # => Raises Interrobang::FalsePredicate
+NaySayer.new.correct! # => Raises Interrobang::FalsePredicate
 ```
 
 `Interrobang` will not convert `bang_methods!` or `assignment_methods=` and instead returns `nil`.
