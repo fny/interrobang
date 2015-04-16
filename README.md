@@ -72,7 +72,7 @@ Interrobang(Answer, :correct?, prefix: 'ensure_', suffix: '_on_saturday') do
 end # => :ensure_correct_on_saturday!
 ```
 
-Beware! `Interrobang` will bangify undefined methods too that classes driven by `method_missing` can be converted too.
+Beware! `Interrobang` will bangify undefined methods too. This allows for classes driven by `method_missing` to be converted.
 
 ```ruby
 class NaySayer
@@ -81,9 +81,10 @@ class NaySayer
   end
 end
 Interrobang(NaySayer, :correct?) # => :correct!
+NaySayer.correct! # => Raises Interrobang::FalsePredicate
 ```
 
-`Interrobang` returns `nil` instead of converting `bang_methods!` or `assignment_methods`.
+`Interrobang` will not convert `bang_methods!` or `assignment_methods=` and instead returns `nil`.
 
 ### Filters
 
