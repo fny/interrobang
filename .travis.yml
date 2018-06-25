@@ -1,6 +1,7 @@
 language: ruby
 script: bundle exec rake test
 rvm:
+  - 2.5
   - 2.2
   - 2.1
   - 2.0.0
