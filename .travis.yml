@@ -1,13 +1,13 @@
 language: ruby
 script: bundle exec rake test
 rvm:
+  - 
   - 2.5
   - 2.2
   - 2.1
   - 2.0.0
   - ruby-head
   - jruby-9
-  - rbx-2
 matrix:
   allow_failures:
     - rvm: ruby-head
